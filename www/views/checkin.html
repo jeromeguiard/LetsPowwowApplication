@@ -1,0 +1,16 @@
+<div data-options="dxView : { name: 'checkin', title:'Venues'   } " >
+    <div data-options="dxContent : { targetPlaceholder: 'content' } " >
+        <div class="dx-field">
+            <div class="dx-field-label">Content: </div>
+            <div data-bind="dxTextArea: { value: content, rows : 5 }" ></div>
+        </div>
+        <div data-bind="dxButton: { text: 'Photo', clickAction: actionsheet.showActionSheet }"></div>
+        <img id="myImage" style="width: 200px;height: 100px;"/>
+
+        <div class="dx-field">
+            <div class="button" data-bind="dxButton:{text:'Checkin', clickAction: checkinBtn}"></div>
+        </div>
+        <div id="action_sheet" data-bind="dxActionSheet: { title: 'Photo', items: actionsheet.items, showTitle: true }"></div>
+    </div>
+    <div id="toast-success" data-bind="dxToast: { message: 'Checkin done', type: 'success' }"></div>
+</div>

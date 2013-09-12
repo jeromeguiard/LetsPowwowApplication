@@ -1,0 +1,22 @@
+<div data-options="dxView : { name: 'registration', title: 'Register' } " >
+    <div data-options="dxContent : { targetPlaceholder: 'content' } " >
+
+        <div>
+            <div >Username : </div>
+            <div data-bind="dxTextBox: { value: usernameValue }" ></div>
+        </div>
+        <div>
+            <div >Mail : </div>
+            <div data-bind="dxTextBox: { value: mailValue }" ></div>
+        </div>
+        <div>
+            <div >Password : </div>
+            <div data-bind="dxTextBox: { value: passwordValue }" ></div>
+        </div>
+        <div>
+            <div >Retype Password : </div>
+            <div data-bind="dxTextBox: { value: password1Value }" ></div>
+        </div>
+        <div data-bind="dxButton: { text: 'Register', clickAction: registerBtn }"></div>
+    </div>
+</div>
