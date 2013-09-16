@@ -1,0 +1,36 @@
+<div data-options="dxView : { name: 'map', title: 'Map' } " >
+    <div data-options="dxContent : { targetPlaceholder: 'content' } " >
+        <div class="map">
+            <div id="map_canvas">  </div>
+        </div>
+
+        <script type="text/javascript">
+
+            var map_canvas = document.getElementById("map_canvas");
+            map_canvas.setAttribute("style", "width:"+window.innerWidth+"px;height:"+window.innerHeight+"px");
+            var map;
+            var center = window.localStorage.getItem("position").split(",");
+
+            function initialize(){
+
+                var map_option = {
+                    center : new google.maps.LatLng(center[1], center[0]),
+                   // center : new google.maps.LatLng(116.4301,39.98273),
+                    zoom : 14,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                }
+                map = new google.maps.Map(map_canvas, map_option)
+
+                var venuesId = window.localStorage.getItem("venuesId").split(",");
+                for (index in venuesId){
+                    var venue = window.localStorage.getItem("venue_"+venuesId[index]);
+                    var v = new Venue();
+                    v.buildFromDict(JSON.parse(venue));
+                    v.displayOnMap(map);
+                }
+
+            }
+            initialize();
+        </script>
+    </div>
+</div>
