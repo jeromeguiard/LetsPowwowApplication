@@ -47,7 +47,7 @@ var app = {
        // alert(device.platform  ); //ok
         //alert(device.uuid  ); //ok
        // alert(device.version ); //4.3
-
+        //At first
         getPosition();
         $(function() {
 

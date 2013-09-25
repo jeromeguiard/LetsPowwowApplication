@@ -15,7 +15,7 @@ function UserDevice(){
         this.device_push_token = device_push_token;
     };
 
-    this.buildFromProp = function(dict){
+    this.buildFromDict = function(dict){
         this.device_id = dict["device_id"];
         this.os_version = dict["os_version"];
         this.device_type = dict["device_type"];
