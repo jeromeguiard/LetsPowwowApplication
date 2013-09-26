@@ -16,6 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+window.Powwow = {};
+window.login = ko.observable(true);
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -35,15 +39,58 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
     },
+
+
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
+       // alert(device.name ); //undefined
+       // alert(device.platform  ); //ok
+        //alert(device.uuid  ); //ok
+       // alert(device.version ); //4.3
+        //At first
+        getPosition();
+        $(function() {
 
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
+            Powwow.app = new DevExpress.framework.html.HtmlApplication(
+                { namespace: Powwow,
+                  defaultLayout: "slideout",
+                  navigation: [
+                    {
+                        title: "Venues",
+                        action: "#venues",
+                        icon: "home"
 
-        console.log('Received Event: ' + id);
+                    },
+                    {
+                        title: "About",
+                        action: "#about",
+                        icon: "info"
+
+                    },
+                    {
+                        "title": "Maps",
+                        "action": "#map",
+                        "icon": "map"
+
+                    },
+                      {
+                          "title": "User",
+                          "action": "#user",
+                          "icon": "user"
+
+                      }
+                    ]}
+            );
+            Powwow.app.router.register(":view", { view: "login" });
+            Powwow.app.router.register(":view", { view: "venues" });
+            Powwow.app.router.register(":view/:id", { view: "venuesDetails",id:undefined });
+            Powwow.app.router.register(":view/:id", { view: "checkin",id:undefined });
+            Powwow.app.router.register(":view", { view: "map" });
+            Powwow.app.router.register(":view", { view: "user" });
+            Powwow.app.router.register(":view", { view: "registration" });
+            Powwow.app.navigate("login");
+        });;
+
     }
+
 };

@@ -35,12 +35,13 @@ describe('app', function() {
         });
     });
 
-    describe('onDeviceReady', function() {
-        it('should report that it fired', function() {
-            spyOn(app, 'receivedEvent');
-            app.onDeviceReady();
-            expect(app.receivedEvent).toHaveBeenCalledWith('deviceready');
+    describe('position', function(){
+        it('should set a position in local storage', function() {
+            app.receivedEvent('deviceready');
+            var positionLocalStorage = window.localStorage.getItem("position");
+            expect(positionLocalStorage).not.toEqual(null);
         });
+
     });
 
     describe('receivedEvent', function() {
@@ -52,11 +53,6 @@ describe('app', function() {
                             '</div>'].join('\n');
         });
 
-        it('should hide the listening element', function() {
-            app.receivedEvent('deviceready');
-            var displayStyle = helper.getComputedStyle('#deviceready .listening', 'display');
-            expect(displayStyle).toEqual('none');
-        });
 
         it('should show the received element', function() {
             app.receivedEvent('deviceready');

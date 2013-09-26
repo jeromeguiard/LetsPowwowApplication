@@ -21,19 +21,58 @@
     <head>
         <title>Jasmine Spec Runner</title>
 
+        <!-- include application files-->
+        <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="js/knockout-2.2.1.js"></script>
+        <script type="text/javascript" src="js/globalize.min.js"></script>
+        <script type="text/javascript" src="js/dx.phonejs.js"></script>
+
+
+        <!-- include models -->
+        <script type="text/javascript" src="js/models/Position.js"></script>
+        <script type="text/javascript" src="js/models/Rest.js"></script>
+        <script type="text/javascript" src="js/models/ApplicationInformations.js"></script>
+        <script type="text/javascript" src="js/models/Location.js"></script>
+        <script type="text/javascript" src="js/models/ApiKey.js"></script>
+        <script type="text/javascript" src="js/models/Image.js"></script>
+        <script type="text/javascript" src="js/models/User.js"></script>
+        <script type="text/javascript" src="js/models/Profile.js"></script>
+        <script type="text/javascript" src="js/models/ProfilePhoto.js"></script>
+        <script type="text/javascript" src="js/models/UserDevice.js"></script>
+        <script type="text/javascript" src="js/models/Category.js"></script>
+        <script type="text/javascript" src="js/models/Venue.js"></script>
+        <script type="text/javascript" src="js/models/Venues.js"></script>
+        <script type="text/javascript" src="js/models/Point.js"></script>
+        <script type="text/javascript" src="js/models/Checkin.js"></script>
+
+
+        <!-- include views -->
+        <!-- App views -->
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="views/login.js"></script>
+        <script type="text/javascript" src="views/venues.js"></script>
+        <script type="text/javascript" src="views/venue-details.js"></script>
+        <script type="text/javascript" src="views/map.js"></script>
+        <script type="text/javascript" src="views/checkin.js"></script>
+        <script type="text/javascript" src="views/user.js"></script>
+        <script type="text/javascript" src="views/registration.js"></script>
+
+
+
         <!-- jasmine source -->
         <link rel="shortcut icon" type="image/png" href="spec/lib/jasmine-1.2.0/jasmine_favicon.png">
         <link rel="stylesheet" type="text/css" href="spec/lib/jasmine-1.2.0/jasmine.css">
         <script type="text/javascript" src="spec/lib/jasmine-1.2.0/jasmine.js"></script>
         <script type="text/javascript" src="spec/lib/jasmine-1.2.0/jasmine-html.js"></script>
 
-        <!-- include source files here... -->
-        <script type="text/javascript" src="js/index.js"></script>
+        <!-- include source files here...
+        <script type="text/javascript" src="js/index.js"></script>   -->
 
         <!-- include spec files here... -->
         <script type="text/javascript" src="spec/helper.js"></script>
         <script type="text/javascript" src="spec/index.js"></script>
-
+        <script type="text/javascript" src="spec/login.js"></script>
+        <script type="text/javascript" src="spec/ApiKey.js"></script>
         <script type="text/javascript">
             (function() {
                 var jasmineEnv = jasmine.getEnv();

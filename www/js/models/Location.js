@@ -1,6 +1,7 @@
 function getPosition(){
    // window.localStorage.setItem("position","116.4301,39.98273");
-    navigator.geolocation.getCurrentPosition(getPositionOnSuccess, onErrorGeo);
+    var positionsOptions = { maximumAge: 60000, timeout: 5000, enableHighAccuracy: true };
+    navigator.geolocation.getCurrentPosition(getPositionOnSuccess, onErrorGeo, positionsOptions);
     //callBack();
 }
 
