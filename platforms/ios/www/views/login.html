@@ -1,0 +1,18 @@
+<div data-options="dxView : { name: 'login' } " >
+    <div data-options="dxContent : { targetPlaceholder: 'content' } " id="login">
+        <h1 data-bind="text: title"></h1>
+        <div>
+            <div data-bind="text: username"> </div>
+            <div data-bind="dxTextBox: { value: usernameValue }" style="width: 200px"></div>
+        </div>
+        <div>
+            <div data-bind="text: password"></div> <div data-bind="dxTextBox: { value: passwordValue }" style="width: 200px"></div>
+        </div>
+        <div data-bind="dxButton: { text: loginValue, clickAction: login }"></div>
+        <div data-bind="dxButton: { text: registrationText, clickAction: registerPage }"></div>
+
+    </div>
+
+
+
+</div>

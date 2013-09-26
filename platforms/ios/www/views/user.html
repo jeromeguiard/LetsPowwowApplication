@@ -1,0 +1,30 @@
+<div data-options="dxView : { name: 'user', title:'Users'   } " >
+    <div data-options="dxContent : { targetPlaceholder: 'content' } " >
+          <div>
+              <img  id="myImage" data-bind="attr :{src: src}, click:actionsheet.showActionSheet" style="width: 200px;height: 100px;">
+          </div>
+          <div class="dx-fieldset top-fieldset">
+            <div class="dx-field">
+                <div class="dx-field-label">NickName:</div>
+                <div class="dx-field-value" data-bind="dxTextBox: { value: nickname, focusOutAction : patchNickname }"></div>
+            </div>
+        </div>
+
+        <div class="dx-fieldset">
+            <div class="dx-field">
+                <div class="dx-field-label">Renren</div>
+                <div class="dx-field-value" data-bind="dxSwitch: { value: sync_renren, clickAction : patchRenren }"></div>
+            </div>
+            <div class="dx-field">
+                <div class="dx-field-label">Tencent</div>
+                <div class="dx-field-value" data-bind="dxSwitch: { value: sync_tencent, clickAction : patchTencent }"></div>
+            </div>
+            <div class="dx-field">
+                <div class="dx-field-label">Weibo</div>
+                <div class="dx-field-value" data-bind="dxSwitch: { value: sync_weibo, clickAction : patchWeibo }"></div>
+            </div>
+        </div>
+        <div id="toast-success" data-bind="dxToast: { message: 'Setting updated', type: 'success' }"></div>
+        <div id="action_sheet" data-bind="dxActionSheet: { title: 'Photo', items: actionsheet.items, showTitle: true }"></div>
+    </div>
+</div>
