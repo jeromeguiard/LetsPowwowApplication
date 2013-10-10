@@ -75,6 +75,15 @@ var app = {
                       }
                     ]}
             );
+            
+            var devices = DevExpress.devices;
+            var iosVersion = devices.iosVersion();
+            
+            if(devices.current().platform ==== "ios" && iosVersion && iosVersion[0] ==== 7){
+                $(".dx-viewport").removeClass("dx-theme-ios").addClass("dx-theme-ios7");
+
+            }
+            
             Powwow.app.router.register(":view", { view: "login" });
             Powwow.app.router.register(":view", { view: "venues" });
             Powwow.app.router.register(":view/:id", { view: "venuesDetails",id:undefined });

@@ -1,7 +1,7 @@
 /*! 
 * DevExpress PhoneJS
-* Version: 13.1.6
-* Build date: Aug 13, 2013
+* Version: 13.1.7
+* Build date: Sep 17, 2013
 *
 * Copyright (c) 2012 - 2013 Developer Express Inc. ALL RIGHTS RESERVED
 * EULA: http://phonejs.devexpress.com/EULA
@@ -1238,7 +1238,10 @@ if (!window.DevExpress) {
                 userAgent = userAgent || window.navigator.userAgent;
                 var matches = /Android (\d\.\d(?:\.\d)?)/.exec(userAgent);
                 if (matches && matches.length === 2)
-                    return matches[1]
+                    return $.map(matches[1].split("."), function(versionPart) {
+                            return parseInt(versionPart, 10)
+                        });
+                return []
             };
         function iosVersion(userAgent) {
             userAgent = userAgent || window.navigator.userAgent;
@@ -1299,7 +1302,6 @@ if (!window.DevExpress) {
             SIMULATED_TRANSITIONEND_TIMEOUT_DATA_KEY = "dxSimulatedTransitionTimeoutKey",
             ANIM_DATA_KEY = "dxAnimData",
             TRANSFORM_PROP = "transform",
-            BACKFACEVISIBILITY_PROP = "backfaceVisibility",
             FRAME_ANIMATION_STEP_TIME = 1000 / 60;
         var TransitionAnimationStrategy = {
                 animate: function($element, config) {
@@ -1535,8 +1537,17 @@ if (!window.DevExpress) {
                 }
                 return easingName
             };
-        var NoneAnimationConfigurator = {setup: function($element, config){}};
+        var baseConfigValidator = function(config, animationType) {
+                $.each(["from", "to"], function() {
+                    if (!$.isPlainObject(config[this]))
+                        throw Error("Animation with the '" + animationType + "' type requires '" + this + "' configuration as an plain object.");
+                })
+            };
+        var CustomAnimationConfigurator = {setup: function($element, config){}};
         var SlideAnimationConfigurator = {
+                validateConfig: function(config) {
+                    baseConfigValidator(config, "slide")
+                },
                 setup: function($element, config) {
                     var animStrategy = getAnimationStrategy(config);
                     if (!support.transform3d || animStrategy !== TransitionAnimationStrategy && animStrategy !== FrameAnimationStrategy)
@@ -1567,6 +1578,9 @@ if (!window.DevExpress) {
                     config.to = {opacity: toOpacity}
                 }};
         var PopAnimationConfigurator = {
+                validateConfig: function(config) {
+                    baseConfigValidator(config, "pop")
+                },
                 setup: function($element, config) {
                     if (!support.transform3d)
                         return;
@@ -1585,53 +1599,11 @@ if (!window.DevExpress) {
                     return "scale(" + scale + ")"
                 }
             };
-        var FlipAnimationConfigurator = {
-                DIRECTIONS: ["left", "right", "top", "bottom"],
-                setup: function($element, config) {
-                    if (!support.transform3d)
-                        return;
-                    var from = config.from,
-                        to = config.to,
-                        direction = this._normalizeDirection(to.direction),
-                        directionFactor = this._getDirectionFactor(direction),
-                        axis = this._getAxis(direction),
-                        fromRotate = "rotate" in from ? from.rotate : -directionFactor * 180,
-                        toRotate = "rotate" in to ? to.rotate : directionFactor * 180,
-                        fromScale = "scale" in from ? from.scale : directionFactor === 1 ? 1 : 0.8,
-                        toScale = "scale" in to ? to.scale : directionFactor === 1 ? 0.8 : 1;
-                    config.from[TRANSFORM_PROP] = this._getCssTransform(axis, fromRotate, fromScale);
-                    config.from[BACKFACEVISIBILITY_PROP] = "hidden";
-                    config.to[TRANSFORM_PROP] = this._getCssTransform(axis, toRotate, toScale);
-                    config.to[BACKFACEVISIBILITY_PROP] = "hidden"
-                },
-                _normalizeDirection: function(direction) {
-                    var index = $.inArray(this.DIRECTIONS);
-                    if (index !== -1)
-                        return direction;
-                    return "left"
-                },
-                _getAxis: function(direction) {
-                    if (direction === "left" || direction === "right")
-                        return "Y";
-                    if (direction === "top" || direction === "bottom")
-                        return "X"
-                },
-                _getDirectionFactor: function(direction) {
-                    if (direction === "left" || direction === "top")
-                        return -1;
-                    if (direction === "right" || direction === "bottom")
-                        return 1
-                },
-                _getCssTransform: function(axis, rotate, scale) {
-                    return "rotate" + axis + "(" + rotate + "deg) scale(" + scale + ")"
-                }
-            };
         var animationConfigurators = {
-                none: NoneAnimationConfigurator,
+                custom: CustomAnimationConfigurator,
                 slide: SlideAnimationConfigurator,
                 fade: FadeAnimationConfigurator,
-                pop: PopAnimationConfigurator,
-                flip: FlipAnimationConfigurator
+                pop: PopAnimationConfigurator
             };
         var getAnimationConfigurator = function(type) {
                 var result = animationConfigurators[type];
@@ -1640,7 +1612,7 @@ if (!window.DevExpress) {
                 return result
             };
         var defaultConfig = {
-                type: "none",
+                type: "custom",
                 from: {},
                 to: {},
                 duration: 400,
@@ -1649,9 +1621,12 @@ if (!window.DevExpress) {
                 delay: 0
             };
         var animate = function(element, config) {
-                var $element = $(element);
                 config = $.extend(true, {}, defaultConfig, config);
-                getAnimationConfigurator(config.type).setup($element, config);
+                var $element = $(element),
+                    configurator = getAnimationConfigurator(config.type);
+                if ($.isFunction(configurator.validateConfig))
+                    configurator.validateConfig(config);
+                configurator.setup($element, config);
                 stop($element);
                 setProps($element, config.from);
                 return executeAnimation($element, config).done(config.complete)
@@ -3395,6 +3370,8 @@ if (!window.DevExpress) {
                     }
             }();
         var serializePropName = function(propName) {
+                if (propName instanceof EdmLiteral)
+                    return propName.valueOf();
                 return propName.replace(/\./g, "/")
             };
         var serializeValue = function(value) {
@@ -4863,6 +4840,8 @@ if (!window.DevExpress) {
         var ui = DX.ui = {};
         var initViewport = function(options) {
                 options = $.extend({}, options);
+                var inFrame = top != self;
+                var device = DX.devices.fromUA();
                 var allowZoom = options.allowZoom,
                     allowPan = options.allowPan;
                 var metaSelector = "meta[name=viewport]";
@@ -4884,8 +4863,10 @@ if (!window.DevExpress) {
                 $("html").css("-ms-touch-action", msTouchVerbs.join(" ") || "none");
                 if (DX.support.touch)
                     $(document).on("touchmove", function(e) {
-                        var count = e.originalEvent.touches.length;
-                        if (!allowPan && count === 1 || !allowZoom && count > 1)
+                        var count = e.originalEvent.touches.length,
+                            zoomDisabled = !allowZoom && count > 1,
+                            panDisabled = !allowPan && count === 1 && !e.originalEvent.isScrollingEvent;
+                        if (zoomDisabled || panDisabled)
                             e.preventDefault()
                     });
                 if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
@@ -4901,48 +4882,46 @@ if (!window.DevExpress) {
                         document.body.style.setProperty("min-height", actualHeight + "px", "important")
                     })
                 }
+                var hideAddressBar = function() {
+                        var ADDRESS_BAR_HEIGHT = 60,
+                            isIphone = device.phone,
+                            isSafari = !navigator.standalone && /safari/i.test(navigator.userAgent);
+                        var doHide = function() {
+                                window.scrollTo(0, 1)
+                            };
+                        var isInput = function($who) {
+                                return $who.is(":input")
+                            };
+                        return function(e) {
+                                var height,
+                                    $target = $(e.target),
+                                    $active = $(document.activeElement),
+                                    isTouch = e.type === "touchstart";
+                                if (isTouch) {
+                                    if (isInput($target))
+                                        return;
+                                    if (isInput($active))
+                                        $active.blur()
+                                }
+                                else if (isInput($active))
+                                    return;
+                                if (isIphone && isSafari) {
+                                    height = $(window).height() + ADDRESS_BAR_HEIGHT;
+                                    if ($(document.body).height() !== height)
+                                        $(document.body).height(height)
+                                }
+                                doHide()
+                            }
+                    }();
+                if (!inFrame && device.ios && DX.devices.iosVersion()[0] < 7) {
+                    $(window).on("load resize touchstart", hideAddressBar);
+                    $(function() {
+                        $(document.body).on("focusout", function() {
+                            var fix_Q477825 = window.pageYOffset
+                        })
+                    })
+                }
             };
-        var device = DX.devices.fromUA();
-        var fix_Q477825 = function() {
-                var yOffset = window.pageYOffset
-            };
-        var hideAddressBar = function() {
-                var ADDRESS_BAR_HEIGHT = 60,
-                    isIphone = device.phone,
-                    isSafari = !navigator.standalone && /safari/i.test(navigator.userAgent);
-                var doHide = function() {
-                        window.scrollTo(0, 1)
-                    };
-                var isInput = function($who) {
-                        return $who.is(":input")
-                    };
-                return function(e) {
-                        var height,
-                            $target = $(e.target),
-                            $active = $(document.activeElement),
-                            isTouch = e.type === "touchstart";
-                        if (isTouch) {
-                            if (isInput($target))
-                                return;
-                            if (isInput($active))
-                                $active.blur()
-                        }
-                        else if (isInput($active))
-                            return;
-                        if (isIphone && isSafari) {
-                            height = $(window).height() + ADDRESS_BAR_HEIGHT;
-                            if ($(document.body).height() !== height)
-                                $(document.body).height(height)
-                        }
-                        doHide()
-                    }
-            }();
-        if (device.ios && DX.devices.iosVersion()[0] < 7) {
-            $(window).on("load resize touchstart", hideAddressBar);
-            $(function() {
-                $(document.body).on("focusout", fix_Q477825)
-            })
-        }
         var TemplateProvider = DX.Class.inherit({
                 getTemplateClass: function(widget) {
                     return Template
@@ -4961,7 +4940,8 @@ if (!window.DevExpress) {
                 render: function(container) {
                     container.append(this._template);
                     return this._template
-                }
+                },
+                dispose: $.noop
             });
         DX.registerActionExecutor({
             designMode: {validate: function(e) {
@@ -4979,15 +4959,8 @@ if (!window.DevExpress) {
             disabled: {validate: function(e) {
                     if (!e.args.length)
                         return;
-                    var element = e.args[0].element;
+                    var element = e.args[0].itemElement || e.args[0].element;
                     if (element && element.is(".dx-state-disabled, .dx-state-disabled *"))
-                        e.canceled = true
-                }},
-            disabledCollectionContainerWidgetItem: {validate: function(e) {
-                    if (!e.args.length)
-                        return;
-                    var element = e.args[0].itemElement;
-                    if (element && element.is(".dx-state-disabled *"))
                         e.canceled = true
                 }}
         });
@@ -5064,7 +5037,7 @@ if (!window.DevExpress) {
                         title: title,
                         message: message
                     };
-                dialogInstance = dialog(options);
+                dialogInstance = ui.dialog.custom(options);
                 return dialogInstance.show()
             };
         var confirm = function(message, title) {
@@ -5084,7 +5057,7 @@ if (!window.DevExpress) {
                                 }
                             }]
                     };
-                dialogInstance = dialog(options);
+                dialogInstance = ui.dialog.custom(options);
                 return dialogInstance.show()
             };
         var notify = function(message, type, displayTime) {
@@ -5331,6 +5304,11 @@ if (!window.DevExpress) {
                     container.append(result);
                     renderBag.remove();
                     return result
+                },
+                dispose: function() {
+                    this._cleanTemplateElement();
+                    this._element.remove();
+                    this._template.remove()
                 }
             });
         var KoTemplateProvider = ui.TemplateProvider.inherit({
@@ -5913,6 +5891,10 @@ if (!window.DevExpress) {
                     config.component = self;
                     var action = new DX.Action(actionSource, config);
                     return function(e) {
+                            if (!arguments.length)
+                                e = {};
+                            if (e instanceof $.Event)
+                                throw Error("Action must be executed with jQuery.Event like action({ jQueryEvent: event })");
                             if (!$.isPlainObject(e))
                                 e = {actionValue: e};
                             return action.execute.call(action, $.extend(e, {
@@ -6134,6 +6116,7 @@ if (!window.DevExpress) {
                 this._clearTimers();
                 if (activeElement && activeElement.closest(this._element()).length)
                     activeElement = null;
+                this._clickAction = null;
                 this.callBase()
             },
             _clean: function() {
@@ -6162,8 +6145,12 @@ if (!window.DevExpress) {
                     this._element().addClass(UI_FEEDBACK_CLASS)
             },
             _renderClick: function() {
-                var eventName = this._eventHelper.eventName("click");
-                this._element().off(eventName).on(eventName, this._createActionByOption("clickAction"))
+                var self = this,
+                    eventName = self._eventHelper.eventName("click");
+                self._clickAction = self._createActionByOption("clickAction");
+                self._element().off(eventName).on(eventName, function(e) {
+                    self._clickAction({jQueryEvent: e})
+                })
             },
             _feedbackDisabled: function() {
                 return !this.option("activeStateEnabled") || this.option("disabled")
@@ -6320,6 +6307,15 @@ if (!window.DevExpress) {
                     if ($.isFunction(templateName))
                         templateName = templateName.apply(this, $.makeArray(arguments).slice(1));
                     return this._templates[templateName]
+                },
+                _cleanTemplates: function() {
+                    $.each(this._templates, function(templateName, template) {
+                        template.dispose()
+                    })
+                },
+                _dispose: function() {
+                    this._cleanTemplates();
+                    this.callBase()
                 }
             });
         ui.ContainerWidget = ContainerWidget
@@ -6721,6 +6717,10 @@ if (!DevExpress.MOD_WIDGETS) {
                     gestureUtils.forget(this);
                     reset()
                 }
+                this._startAction = null;
+                this._updateAction = null;
+                this._endAction = null;
+                this._cancelAction = null
             },
             itemWidthFunc: function() {
                 return this.option("itemWidthFunc")(this._element())
@@ -7356,16 +7356,19 @@ if (!DevExpress.MOD_WIDGETS) {
             },
             _bounceContent: function(updating) {
                 if (this._inBounds()) {
-                    if (!this.option("scrollByThumb")) {
-                        this._scrollbars.x.toggle(false, this.option("animationEnabled"));
-                        this._scrollbars.y.toggle(false, this.option("animationEnabled"))
-                    }
-                    feedback.unlock();
-                    gestureUtils.notifyEnd(this);
+                    this._completeGesture();
                     this._allowUpdate = true;
                     return $.Deferred().resolveWith(this).promise()
                 }
                 return this._scrollContent(this._limitedOffset(), true, true, updating)
+            },
+            _completeGesture: function() {
+                if (!this.option("scrollByThumb")) {
+                    this._scrollbars.x.toggle(false, this.option("animationEnabled"));
+                    this._scrollbars.y.toggle(false, this.option("animationEnabled"))
+                }
+                feedback.unlock();
+                gestureUtils.notifyEnd(this)
             },
             _arrangeScrollbars: function(contentOffset) {
                 this._scrollbars.x.arrange(contentOffset.left);
@@ -7821,6 +7824,7 @@ if (!DevExpress.MOD_WIDGETS) {
                 this._considerTopPocket = false;
                 this._considerBottomPocket = false;
                 this._freezed = false;
+                this._completeGesture();
                 return this.update(true)
             },
             _dispose: function() {
@@ -7956,14 +7960,14 @@ if (!DevExpress.MOD_WIDGETS) {
                 this._renderValue()
             },
             _renderClick: function() {
-                var eventName = this._eventHelper.eventName("click");
-                this._element().off(eventName).on(eventName, $.proxy(this._handleClick, this))
-            },
-            _handleClick: function() {
-                var self = this;
-                this._createActionByOption("clickAction", {beforeExecute: function() {
-                        self.option("checked", !self.option("checked"))
-                    }})()
+                var self = this,
+                    eventName = this._eventHelper.eventName("click"),
+                    action = this._createActionByOption("clickAction", {beforeExecute: function() {
+                            self.option("checked", !self.option("checked"))
+                        }});
+                this._element().off(eventName).on(eventName, function(e) {
+                    action({jQueryEvent: e})
+                })
             },
             _renderValue: function() {
                 this._element().toggleClass(CHECKBOX_CHECKED_CLASS, Boolean(this.option("checked")))
@@ -7984,7 +7988,6 @@ if (!DevExpress.MOD_WIDGETS) {
             SWITCH_ON_VALUE_CLASS = SWITCH_CLASS + "-on-value",
             SWITCH_ON_CLASS = SWITCH_CLASS + "-on",
             SWITCH_OFF_CLASS = SWITCH_CLASS + "-off",
-            DEFAULT_MARGIN_BOUND = 50,
             SWITCH_ANIMATION_DURATION = 100;
         ui.registerComponent("dxSwitch", ui.Widget.inherit({
             _defaultOptions: function() {
@@ -8002,24 +8005,25 @@ if (!DevExpress.MOD_WIDGETS) {
             _render: function() {
                 var self = this,
                     element = this._element();
-                this._switchInner = $("<div />").addClass(SWITCH_INNER_CLASS).append($("<div />").addClass(SWITCH_HANDLE_CLASS));
+                this._switchInner = $("<div />").addClass(SWITCH_INNER_CLASS);
+                this._handle = $("<div />").addClass(SWITCH_HANDLE_CLASS).appendTo(this._switchInner);
                 this._labelOn = $("<div />").addClass(SWITCH_ON_CLASS).prependTo(this._switchInner);
                 this._labelOff = $("<div />").addClass(SWITCH_OFF_CLASS).appendTo(this._switchInner);
-                var $switchWrapper = $("<div />").addClass(SWITCH_WRAPPER_CLASS).append(this._switchInner);
-                element.addClass(SWITCH_CLASS).append($switchWrapper);
-                this._marginBound = parseInt(element.find("." + SWITCH_WRAPPER_CLASS).css("margin-right")) || DEFAULT_MARGIN_BOUND;
+                this._switchWrapper = $("<div />").addClass(SWITCH_WRAPPER_CLASS).append(this._switchInner);
+                element.addClass(SWITCH_CLASS).append(this._switchWrapper);
                 element.dxSwipeable({
                     elastic: false,
                     startAction: $.proxy(this._handleSwipeStart, this),
                     updateAction: $.proxy(this._handleSwipeUpdate, this),
-                    endAction: $.proxy(this._handleSwipeEnd, this),
-                    itemWidthFunc: function() {
-                        return self._marginBound + 1
-                    }
+                    endAction: $.proxy(this._handleSwipeEnd, this)
                 });
-                this._renderValue();
                 this._renderLabels();
-                this.callBase()
+                this.callBase();
+                this._updateMarginBound();
+                this._renderValue()
+            },
+            _updateMarginBound: function() {
+                this._marginBound = this._switchWrapper.outerWidth(true) - this._handle.width()
             },
             _renderPosition: function(state, swipeOffset) {
                 var stateInt = state ? 1 : 0;
@@ -8088,6 +8092,11 @@ if (!DevExpress.MOD_WIDGETS) {
             },
             _optionChanged: function(name, value, prevValue) {
                 switch (name) {
+                    case"width":
+                        this.callBase(name, value, prevValue);
+                        this._updateMarginBound();
+                        this._renderValue();
+                        break;
                     case"value":
                         this._renderValue();
                         break;
@@ -8133,6 +8142,7 @@ if (!DevExpress.MOD_WIDGETS) {
                         keyPressAction: null,
                         keyUpAction: null,
                         changeAction: null,
+                        enterKeyAction: null,
                         mode: "text"
                     })
             },
@@ -8218,16 +8228,16 @@ if (!DevExpress.MOD_WIDGETS) {
             _renderEnterKeyAction: function() {
                 if (this.option("enterKeyAction")) {
                     this._enterKeyAction = this._createActionByOption("enterKeyAction");
-                    this._input().on("keydown.enterKey.dxEditBox", $.proxy(this._onKeyDownHandler, this))
+                    this._input().on("keyup.enterKey.dxEditBox", $.proxy(this._onKeyDownHandler, this))
                 }
                 else {
-                    this._input().off("keydown.enterKey.dxEditBox");
+                    this._input().off("keyup.enterKey.dxEditBox");
                     this._enterKeyAction = undefined
                 }
             },
             _onKeyDownHandler: function(e) {
                 if (e.which === 13)
-                    this._enterKeyAction()
+                    this._enterKeyAction({jQueryEvent: e})
             },
             _renderDisabledState: function() {
                 this.callBase();
@@ -8289,8 +8299,7 @@ if (!DevExpress.MOD_WIDGETS) {
             _defaultOptions: function() {
                 return $.extend(this.callBase(), {
                         mode: "text",
-                        maxLength: null,
-                        enterKeyAction: null
+                        maxLength: null
                     })
             },
             _render: function() {
@@ -8340,7 +8349,7 @@ if (!DevExpress.MOD_WIDGETS) {
             },
             _isAndroid: function() {
                 var ua = window.navigator.userAgent,
-                    version = DX.devices.androidVersion(ua);
+                    version = DX.devices.androidVersion(ua).join(".");
                 return version && /^(2\.|4\.0|4\.1)/.test(version) && ua.indexOf("Chrome") === -1
             }
         }))
@@ -8363,7 +8372,29 @@ if (!DevExpress.MOD_WIDGETS) {
                 this._element().addClass(TEXTAREA_CLASS)
             },
             _renderInput: function() {
-                this._element().append($("<textarea>").addClass(EDITBOX_INPUT_CLASS)).append($("<div />").addClass(EDITBOX_BORDER_CLASS))
+                this._element().append($("<textarea>").addClass(EDITBOX_INPUT_CLASS)).append($("<div />").addClass(EDITBOX_BORDER_CLASS));
+                this._renderScrollHandler()
+            },
+            _renderScrollHandler: function() {
+                var eventHelper = this._eventHelper,
+                    $input = this._input(),
+                    eventY = 0;
+                $input.on(eventHelper.eventName("start"), function(e) {
+                    eventY = eventHelper.eventData(e).y
+                });
+                $input.on(eventHelper.eventName("move"), function(e) {
+                    var scrollTopPos = $input.scrollTop(),
+                        scrollBottomPos = $input.get(0).scrollHeight - $input.outerHeight() - scrollTopPos;
+                    if (scrollTopPos === 0 && scrollBottomPos === 0)
+                        return;
+                    var currentEventY = eventHelper.eventData(e).y;
+                    var isScrollFromTop = scrollTopPos === 0 && eventY >= currentEventY;
+                    var isScrollFromBottom = scrollBottomPos === 0 && eventY <= currentEventY;
+                    var isScrollFromMiddle = scrollTopPos > 0 && scrollBottomPos > 0;
+                    if (isScrollFromTop || isScrollFromBottom || isScrollFromMiddle)
+                        e.originalEvent.isScrollingEvent = true;
+                    eventY = currentEventY
+                })
             },
             _renderInputType: $.noop,
             _renderProps: function() {
@@ -8490,7 +8521,7 @@ if (!DevExpress.MOD_WIDGETS) {
             },
             _parseValue: function(value) {
                 var number;
-                number = Globalize.parseFloat(value, 10, Globalize.findClosestCulture(navigator.language) || Globalize.cultures["default"].language);
+                number = Globalize.parseFloat(value, 10, Globalize.cultures["default"].language);
                 if (isNaN(number)) {
                     this._input().val(this.option("value"));
                     return undefined
@@ -8881,10 +8912,15 @@ if (!DevExpress.MOD_WIDGETS) {
                 return this._items()
             },
             _attachClickEvent: function() {
-                var itemSelector = this._itemSelector(),
+                var self = this,
+                    itemSelector = this._itemSelector(),
                     itemClickAction = this._createAction(this._handleItemClick);
                 this._element().off("." + this.NAME, itemSelector).on(this._eventHelper.eventName("end"), itemSelector, function(e) {
-                    itemClickAction({jQueryEvent: e})
+                    var itemElement = $(e.target).closest(self._itemSelector());
+                    itemClickAction({
+                        jQueryEvent: e,
+                        itemElement: itemElement
+                    })
                 })
             },
             _handleItemClick: function(args) {
@@ -8892,9 +8928,10 @@ if (!DevExpress.MOD_WIDGETS) {
                     instance = args.component;
                 if (instance._eventHelper.needSkipEvent(e))
                     return;
-                var clickedItemElement = $(e.target).closest(instance._itemSelector()).get(0);
-                instance.option("selectedIndex", instance._tabs().index(clickedItemElement));
-                e.target = instance._tabs().get(instance.option("selectedIndex"));
+                var clickedItemElement = $(e.target).closest(instance._itemSelector()).get(0),
+                    index = instance._tabs().index(clickedItemElement);
+                instance.option("selectedIndex", index);
+                e.target = instance._tabs().get(index);
                 instance._handleItemEvent(e, "itemClickAction")
             },
             _optionChanged: function(name) {
@@ -9037,7 +9074,9 @@ if (!DevExpress.MOD_WIDGETS) {
                 this._scrollView = this._element().dxScrollView({
                     disabled: this.option("disabled") || !this.option("scrollingEnabled"),
                     pullDownAction: this.option("scrollingEnabled") && this.option("pullRefreshEnabled") ? $.proxy(this._handlePullDown, this) : null,
-                    reachBottomAction: this.option("scrollingEnabled") && this.option("autoPagingEnabled") && this._dataSource ? $.proxy(this._handleScrollBottom, this) : null
+                    reachBottomAction: this.option("scrollingEnabled") && this.option("autoPagingEnabled") && this._dataSource ? $.proxy(this._handleScrollBottom, this) : null,
+                    scrollByThumb: this.option("scrollByThumb"),
+                    scrollByContent: this.option("scrollByContent")
                 }).data("dxScrollView");
                 this._scrollView.toggleLoading(!!this._dataSource);
                 this._container = this._scrollView.content()
@@ -9590,16 +9629,23 @@ if (!DevExpress.MOD_WIDGETS) {
             },
             _handleSwipeStart: function(e) {
                 var itemsCount = this._itemsCount();
-                if (!itemsCount || fx.animating(this._items().eq(0))) {
+                if (!itemsCount) {
                     e.cancel = true;
                     return
                 }
+                this._stopItemAnimations();
                 this._userInteraction = true;
                 if (!this.option("loop")) {
                     var selectedIndex = this.option("selectedIndex");
                     e.maxLeftOffset = itemsCount - selectedIndex - 1;
                     e.maxRightOffset = selectedIndex
                 }
+            },
+            _stopItemAnimations: function() {
+                if (fx.animating(this._items().eq(0)))
+                    this._items().each(function() {
+                        fx.stop(this, true)
+                    })
             },
             _handleSwipeUpdate: function(e) {
                 this._renderItemPositions(e.offset)
@@ -9707,7 +9753,8 @@ if (!DevExpress.MOD_WIDGETS) {
             OVERLAY_SHADER_CLASS = OVERLAY_CLASS + "-shader",
             OVERLAY_MODAL_CLASS = OVERLAY_CLASS + "-modal",
             OVERLAY_SHOW_EVENT_TOLERANCE = 50,
-            ACTIONS = ["showingAction", "shownAction", "hiddingAction", "hiddenAction"];
+            ACTIONS = ["showingAction", "shownAction", "hiddingAction", "hiddenAction"],
+            LAST_Z_INDEX = 1000;
         var defaultTargetContainer = ".dx-viewport";
         ui.registerComponent("dxOverlay", ui.ContainerWidget.inherit({
             _defaultOptions: function() {
@@ -9728,6 +9775,7 @@ if (!DevExpress.MOD_WIDGETS) {
                             },
                             hide: {
                                 type: "pop",
+                                duration: 400,
                                 to: {
                                     opacity: 0,
                                     scale: 0
@@ -9735,8 +9783,7 @@ if (!DevExpress.MOD_WIDGETS) {
                                 from: {
                                     opacity: 1,
                                     scale: 1
-                                },
-                                duration: 400
+                                }
                             }
                         },
                         showingAction: null,
@@ -9780,6 +9827,8 @@ if (!DevExpress.MOD_WIDGETS) {
             _closeOnOutsideClickHandler: function(e) {
                 var closeOnOutsideClick = this.option("closeOnOutsideClick"),
                     visible = this.option("visible");
+                if ($.isFunction(closeOnOutsideClick))
+                    closeOnOutsideClick = closeOnOutsideClick(e);
                 if (closeOnOutsideClick && visible) {
                     var $container = this._$container,
                         outsideClick = !$container.is(e.target) && !$.contains($container, e.target),
@@ -9797,7 +9846,8 @@ if (!DevExpress.MOD_WIDGETS) {
                 $(document).on(eventNames, this._myCloseOnOutsideClickHandler)
             },
             _detachCloseOnOutsideClickHandler: function() {
-                $(document).off(".dxOverlay", this._myCloseOnOutsideClickHandler)
+                var eventNames = this._eventHelper.eventName("start");
+                $(document).off(eventNames, this._myCloseOnOutsideClickHandler)
             },
             _render: function() {
                 var $element = this._element().addClass(OVERLAY_CLASS);
@@ -9825,6 +9875,7 @@ if (!DevExpress.MOD_WIDGETS) {
                 if (this.closeCallback)
                     DX.backButtonCallback.remove(this.closeCallback);
                 this._detachCloseOnOutsideClickHandler();
+                this._actions = null;
                 this.callBase()
             },
             _renderContent: function() {
@@ -9867,6 +9918,7 @@ if (!DevExpress.MOD_WIDGETS) {
             _makeVisible: function() {
                 var self = this,
                     animation = self.option("animation") || {};
+                self._element().css("z-index", ++LAST_Z_INDEX);
                 self._actions.showingAction();
                 self._toggleVisibility(true);
                 self._toggleVisibility(true);
@@ -9893,9 +9945,7 @@ if (!DevExpress.MOD_WIDGETS) {
                     self._animate($.extend({}, animation.hide, {complete: function() {
                             self._toggleVisibility(false);
                             animationComplete();
-                            self._cleanupAnimation().done(function() {
-                                self._notifyHideComplete()
-                            })
+                            self._notifyHideComplete()
                         }}))
                 }
                 else {
@@ -9926,21 +9976,8 @@ if (!DevExpress.MOD_WIDGETS) {
                         height: this._$target.outerHeight()
                     })
                 }
+                this._$container.css("transform", "none");
                 DX.position(this._$container, this.option("position"))
-            },
-            _cleanupAnimation: function() {
-                var animation = this.option("animation"),
-                    to;
-                if (!animation)
-                    return $.Deferred().resolve();
-                to = animation.hide && animation.hide.from || animation.show && animation.show.to;
-                if (to)
-                    return DX.fx.animate(this._$container, {
-                            duration: 0,
-                            type: animation.hide.type,
-                            to: to
-                        });
-                return $.Deferred().resolve()
             },
             _toggleVisibility: function(visible) {
                 this._element().toggle(visible);
@@ -9951,17 +9988,24 @@ if (!DevExpress.MOD_WIDGETS) {
                     DX.fx.animate(this._$container, animation)
             },
             _optionChanged: function(name, value) {
-                if (name === "visible")
-                    this._renderVisibilityAnimate();
-                else if ($.inArray(name, ACTIONS) > -1)
+                if ($.inArray(name, ACTIONS) > -1) {
                     this._renderActions();
-                else if (name === "targetContainer") {
-                    this._setTarget(value);
-                    this._moveToTargetContainer();
-                    this._refresh()
+                    return
                 }
-                else if (name !== "closeOnOutsideClick")
-                    this._refresh()
+                switch (name) {
+                    case"visible":
+                        this._renderVisibilityAnimate();
+                        break;
+                    case"targetContainer":
+                        this._setTarget(value);
+                        this._moveToTargetContainer();
+                        this._refresh();
+                        break;
+                    case"closeOnOutsideClick":
+                        break;
+                    default:
+                        this.callBase.apply(this, arguments)
+                }
             },
             toggle: function(showing) {
                 showing = showing === undefined ? !this.option("visible") : showing;
@@ -10052,14 +10096,12 @@ if (!DevExpress.MOD_WIDGETS) {
                 this._$container.addClass(TOAST_CLASS_PREFIX + String(this.option("type")).toLowerCase());
                 this.content().addClass(TOAST_CONTENT_CLASS).css("opacity", 0)
             },
-            _renderVisibilityAnimate: function() {
-                this.callBase.apply(this, arguments);
-                if (this.option("visible")) {
-                    clearTimeout(this._hideTimeout);
-                    this._hideTimeout = setTimeout($.proxy(function() {
-                        this.hide()
-                    }, this), this.option("displayTime"))
-                }
+            _notifyShowComplete: function() {
+                this.callBase();
+                clearTimeout(this._hideTimeout);
+                this._hideTimeout = setTimeout($.proxy(function() {
+                    this.hide()
+                }, this), this.option("displayTime"))
             },
             _dispose: function() {
                 clearTimeout(this._hideTimeout);
@@ -10099,9 +10141,6 @@ if (!DevExpress.MOD_WIDGETS) {
                         showTitle: true,
                         fullScreen: false
                     })
-            },
-            _init: function() {
-                this.callBase()
             },
             _render: function() {
                 this._$container.toggleClass(POPUP_FULL_SCREEN_CLASS, this.option("fullScreen"));
@@ -10437,23 +10476,18 @@ if (!DevExpress.MOD_WIDGETS) {
                 this._valueChangeAction = this._createActionByOption("valueChangeAction")
             },
             _optionChanged: function(name) {
-                var self = this;
                 this._checkExceptions();
                 switch (name) {
-                    case"value":
-                        this._calcSelectedItem(function() {
-                            self._valueChangeAction({selectedItem: self._selectedItem});
-                            self._compileValueGetter();
-                            self._compileDisplayGetter();
-                            self._refreshSelected();
-                            self._setFieldText()
-                        });
-                        break;
                     case"valueExpr":
-                        this._compileValueGetter();
-                        this._compileDisplayGetter();
-                        this._refreshSelected();
-                        this._setFieldText();
+                    case"value":
+                        this._calcSelectedItem($.proxy(function() {
+                            if (name === "value")
+                                this._valueChangeAction({selectedItem: this._selectedItem});
+                            this._compileValueGetter();
+                            this._compileDisplayGetter();
+                            this._refreshSelected();
+                            this._setFieldText()
+                        }, this));
                         break;
                     case"displayExpr":
                         this._compileDisplayGetter();
@@ -10476,9 +10510,7 @@ if (!DevExpress.MOD_WIDGETS) {
                         if (this._dataSource)
                             this._dataSourceOriginalFilter = this._dataSource.filter();
                         this._compileValueGetter();
-                        this._calcSelectedItem(function() {
-                            self._setFieldText()
-                        });
+                        this._calcSelectedItem($.proxy(this._setFieldText, this));
                         break;
                     case"searchEnabled":
                         this._search.toggle(this.option("searchEnabled"));
@@ -10518,10 +10550,7 @@ if (!DevExpress.MOD_WIDGETS) {
                     this._list.option("items", undefined)
             },
             _handleDataSourceChanged: function(items) {
-                var self = this;
-                this._calcSelectedItem(function() {
-                    self._setFieldText()
-                })
+                this._calcSelectedItem($.proxy(this._setFieldText, this))
             },
             _clean: function() {
                 if (this._popup)
@@ -10573,25 +10602,20 @@ if (!DevExpress.MOD_WIDGETS) {
                 this.option("displayValue", text)
             },
             _calcSelectedItem: function(callback) {
-                var self = this,
-                    value = self.option("value");
-                if (!self._dataSource || value === undefined) {
-                    self._selectedItem = undefined;
+                var value = this.option("value");
+                if (!this._dataSource || value === undefined) {
+                    this._selectedItem = undefined;
                     callback();
                     return
                 }
-                if (value === self._valueGetter(self._selectedItem)) {
-                    callback();
-                    return
-                }
-                self._dataSource.lookup({
+                this._dataSource.lookup({
                     key: value,
-                    lookupExpression: self._getValueGetterExpr(),
-                    lookupGetter: self._valueGetter
-                }).done(function(result) {
-                    self._selectedItem = result;
+                    lookupExpression: this._getValueGetterExpr(),
+                    lookupGetter: this._valueGetter
+                }).done($.proxy(function(result) {
+                    this._selectedItem = result;
                     callback()
-                })
+                }, this))
             },
             _refreshSelected: function() {
                 var self = this;
@@ -10646,6 +10670,9 @@ if (!DevExpress.MOD_WIDGETS) {
                 this.callBase();
                 this._togglePopup(this.option("visible"))
             },
+            _renderClick: function() {
+                this._popup.option("clickAction", this.option("clickAction"))
+            },
             _renderPopup: function() {
                 var $element = this._element();
                 return $("<div/>").addClass(ACTION_SHEET_POPUP_CLASS).appendTo($element).dxPopup({
@@ -10660,18 +10687,34 @@ if (!DevExpress.MOD_WIDGETS) {
                                 type: "slide",
                                 duration: 400,
                                 from: {top: $("body").height()},
-                                to: {top: 0 - $element.find(".dx-overlay-content").height()}
+                                to: {top: 0 - $element.find(".dx-overlay-content").height()},
+                                complete: $.proxy(this._cleanupPopupAnimation, this)
                             },
                             hide: {
                                 type: "slide",
                                 duration: 400,
                                 from: {top: 0 - $element.find(".dx-overlay-content").height()},
-                                to: {top: $("body").height()}
+                                to: {top: $("body").height()},
+                                complete: $.proxy(this._cleanupPopupAnimation, this)
                             }
                         },
                         width: "100%",
                         height: "auto"
                     }).data("dxPopup")
+            },
+            _cleanupPopupAnimation: function() {
+                var animation = this._popup.option("animation"),
+                    to;
+                if (!animation)
+                    return $.Deferred().resolve();
+                to = animation.hide && animation.hide.from || animation.show && animation.show.to;
+                if (to)
+                    return DX.fx.animate(this._popup._$container, {
+                            duration: 0,
+                            type: animation.hide.type,
+                            to: to
+                        });
+                return $.Deferred().resolve()
             },
             _renderCancel: function() {
                 return $("<div/>").addClass(ACTION_SHEET_CANCEL_BUTTON_CLASS).appendTo(this._popup.content()).dxButton({
@@ -10697,7 +10740,7 @@ if (!DevExpress.MOD_WIDGETS) {
             _itemDataKey: function() {
                 return ACTION_SHEET_ITEM_DATA_KEY
             },
-            _toggleVisibility: function(){},
+            _toggleVisibility: $.noop,
             _togglePopup: function(visible) {
                 var self = this;
                 self._popup.toggle(visible).done(function() {
@@ -10743,6 +10786,10 @@ if (!DevExpress.MOD_WIDGETS) {
             },
             hide: function() {
                 return this.toggle(false)
+            },
+            _dispose: function() {
+                this._popup._dispose();
+                this.callBase()
             }
         }))
     })(jQuery, DevExpress);
@@ -11587,7 +11634,10 @@ if (!DevExpress.MOD_WIDGETS) {
                     valueUpdateEvent: "keyup change",
                     keyDownAction: $.proxy(this._handleTextboxKeyDown, this),
                     keyUpAction: $.proxy(this._handleTextboxKeyUp, this),
-                    valueUpdateAction: $.proxy(this._updateValue, this)
+                    valueUpdateAction: $.proxy(this._updateValue, this),
+                    focusOutAction: $.proxy(function() {
+                        this._popup.hide()
+                    }, this)
                 }).appendTo(this._element()).data("dxTextBox")
             },
             _handleTextboxKeyDown: function(e) {
@@ -11907,10 +11957,16 @@ if (!DevExpress.MOD_WIDGETS) {
                 }).data("dxButton")
             },
             _renderClick: function() {
-                this._element().off("." + this.NAME).on(this._eventHelper.eventName("click"), this._createAction(this._handleButtonClick))
+                this.callBase();
+                var action = this._createAction(this._handleButtonClick);
+                this._element().on(this._eventHelper.eventName("click"), function(e) {
+                    action({jQueryEvent: e})
+                });
+                if (this._popup)
+                    this._popup.option("clickAction", this.option("clickAction"))
             },
             _handleButtonClick: function(e) {
-                e.component._popup.show()
+                e.component._popup.toggle()
             },
             _renderList: function() {
                 this._list = this._popup.content().addClass(DROP_DOWN_MENU_LIST_CLASS).dxList({
@@ -11929,7 +11985,10 @@ if (!DevExpress.MOD_WIDGETS) {
                 this._button.option("visible", visible)
             },
             _attachListClick: function() {
-                this._list._element().off("." + this.NAME).on(this._eventHelper.eventName("click"), this._createAction(this._handleListClick))
+                var action = this._createAction(this._handleListClick);
+                this._list._element().off("." + this.NAME).on(this._eventHelper.eventName("click"), function(e) {
+                    action({jQueryEvent: e})
+                })
             },
             _handleListClick: function(e) {
                 e.component._popup.hide()
@@ -11938,7 +11997,9 @@ if (!DevExpress.MOD_WIDGETS) {
                 this._popup = $("<div />").addClass(DROP_DOWN_MENU_POPUP_CLASS).appendTo(this._element()).dxPopup({
                     showTitle: false,
                     shading: false,
-                    closeOnOutsideClick: true,
+                    closeOnOutsideClick: $.proxy(function(e) {
+                        return !$(e.target).closest(this._button._element()).length
+                    }, this),
                     width: "auto",
                     height: "auto",
                     position: {
@@ -11956,18 +12017,26 @@ if (!DevExpress.MOD_WIDGETS) {
                             type: "fade",
                             to: 0
                         }
-                    }
+                    },
+                    clickAction: this.option("clickAction")
                 }).data("dxPopup")
             },
             _optionChanged: function(name, value) {
-                if (/^button/.test(name))
+                if (/^button/.test(name)) {
                     this._renderButton();
-                else if (name === "dataSource" || name === "items")
-                    this._list.option("dataSource", value);
-                else if (name === "itemRender")
-                    this._list.option("itemRender", value);
-                else
-                    this.callBase.apply(this, arguments)
+                    return
+                }
+                switch (name) {
+                    case"dataSource":
+                    case"items":
+                        this._list.option("dataSource", value);
+                        break;
+                    case"itemRender":
+                        this._list.option("itemRender", value);
+                        break;
+                    default:
+                        this.callBase.apply(this, arguments)
+                }
             }
         }))
     })(jQuery, DevExpress);
@@ -12235,6 +12304,7 @@ if (!DevExpress.MOD_FRAMEWORK) {
             _renderDisabledState: $.noop,
             _dispose: function() {
                 this.callBase();
+                this._element().removeData(this.NAME);
                 this.beforeExecute.empty();
                 this.afterExecute.empty()
             }
@@ -12454,10 +12524,14 @@ if (!DevExpress.MOD_FRAMEWORK) {
                 if (this._browserAdapter.isRootPage())
                     this._browserAdapter.pushState("")
             },
+            _isBuggyAndroid: function() {
+                var version = DX.devices.androidVersion();
+                return version.length > 1 && (version[0] === 2 && version[1] < 4 || version[0] < 2)
+            },
             _createBrowserAdapter: function(options) {
                 var sourceWindow = options.window || window;
                 if (sourceWindow === sourceWindow.top)
-                    if (sourceWindow.history.replaceState && sourceWindow.history.pushState)
+                    if (sourceWindow.history.replaceState && sourceWindow.history.pushState && !this._isBuggyAndroid())
                         return new DX.framework.DefaultBrowserAdapter(options);
                     else
                         return new DX.framework.OldBrowserAdapter(options);
@@ -12893,7 +12967,14 @@ if (!DevExpress.MOD_FRAMEWORK) {
                 if (!this._viewCache.hasView(viewInfo))
                     this._onViewRemoved(viewInfo)
             },
-            _disposeView: function(viewInfo){},
+            _disposeView: function(viewInfo) {
+                if (!viewInfo.model)
+                    return;
+                var commands = viewInfo.model.commands || [];
+                $.each(commands, function(index, command) {
+                    command._dispose()
+                })
+            },
             _acquireView: function(navigationItem) {
                 var viewInfo = this._viewCache.getView(navigationItem.key);
                 if (!viewInfo) {
@@ -12949,20 +13030,18 @@ if (!DevExpress.MOD_FRAMEWORK) {
             },
             _setCurrentView: function(viewInfo, direction) {
                 var self = this;
+                if (DX.data.utils.DataSourceLoadLock.locked())
+                    throw new Error("The view cannot be shown. Consider moving the view's async operations to the 'viewShown' method of your view model.");
                 var eventArgs = {
                         viewInfo: viewInfo,
                         direction: direction
                     };
                 self._processEvent("viewShowing", eventArgs, viewInfo.model);
-                if (eventArgs.cancel)
-                    return;
-                if (!DX.data.utils.DataSourceLoadLock.locked()) {
-                    DX.data.utils.DataSourceLoadLock.obtain();
-                    return self._setCurrentViewAsyncImpl(eventArgs.viewInfo, direction).done(function() {
-                            DX.data.utils.DataSourceLoadLock.release();
-                            self._processEvent("viewShown", eventArgs, viewInfo.model)
-                        })
-                }
+                DX.data.utils.DataSourceLoadLock.obtain();
+                return self._setCurrentViewAsyncImpl(eventArgs.viewInfo, direction).done(function() {
+                        DX.data.utils.DataSourceLoadLock.release();
+                        self._processEvent("viewShown", eventArgs, viewInfo.model)
+                    })
             },
             _highlightCurrentNavigationCommand: function(viewInfo) {
                 var self = this,

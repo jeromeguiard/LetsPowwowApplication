@@ -1,7 +1,7 @@
 /*! 
 * DevExpress PhoneJS
-* Version: 13.1.6
-* Build date: Aug 13, 2013
+* Version: 13.1.7
+* Build date: Sep 17, 2013
 *
 * Copyright (c) 2012 - 2013 Developer Express Inc. ALL RIGHTS RESERVED
 * EULA: http://phonejs.devexpress.com/EULA
@@ -2627,13 +2627,12 @@
   display: block;
   position: absolute;
   top: 13px;
-  left: 5px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   -ms-border-radius: 10px;
   -o-border-radius: 10px;
   border-radius: 10px;
-  width: 66px;
+  width: 100%;
   height: 14px;
   background: rgba(255,255,255,.2);
 }
@@ -2659,18 +2658,24 @@
 }
 .dx-theme-ios .dx-switch .dx-switch-wrapper
 {
+  -webkit-border-radius: inherit;
+  -moz-border-radius: inherit;
+  -ms-border-radius: inherit;
+  -o-border-radius: inherit;
   border-radius: inherit;
   overflow: hidden;
+  margin: 0 -2px 0 0;
 }
 .dx-theme-ios .dx-switch .dx-switch-inner
 {
-  width: 126px;
+  width: 200%;
   height: 100%;
 }
 .dx-theme-ios .dx-switch .dx-switch-on, .dx-theme-ios .dx-switch .dx-switch-off
 {
+  margin-left: -13px;
   float: left;
-  width: 53px;
+  width: 50%;
   height: 18px;
   text-align: center;
   font-size: 18px;
@@ -2679,16 +2684,16 @@
 }
 .dx-theme-ios .dx-switch .dx-switch-on
 {
-  padding: 4px 10px 4px 0;
+  padding: 4px 0 4px 0;
   background: #1d84f7;
   text-shadow: 0 -1px 0 rgba(0,0,0,.3);
   color: #fff;
 }
 .dx-theme-ios .dx-switch .dx-switch-handle
 {
+  margin-left: -13px;
   position: relative;
   float: left;
-  margin: 0 -13px;
   width: 24px;
   height: 24px;
   -webkit-border-radius: 50%;
@@ -2713,7 +2718,7 @@
 }
 .dx-theme-ios .dx-switch .dx-switch-off
 {
-  padding: 4px 0 4px 10px;
+  padding: 4px 0 4px 0;
   color: #888;
   background: #e1e1e1;
 }
@@ -2776,6 +2781,10 @@
 }
 .dx-theme-ios7 .dx-switch
 {
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
+  -ms-border-radius: 16px;
+  -o-border-radius: 16px;
   border-radius: 16px;
   width: 51px;
   height: 31px;
@@ -2801,19 +2810,40 @@
   -o-box-shadow: 0 0 2px rgba(170,170,170,.4) inset;
   box-shadow: 0 0 2px rgba(170,170,170,.4) inset;
 }
+.dx-theme-ios7 .dx-switch.dx-switch-on-value :after
+{
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -ms-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none;
+}
+.dx-theme-ios7 .dx-switch.dx-state-active :after
+{
+  -webkit-box-shadow: 0 0 2px rgba(170,170,170,.4) inset !important;
+  -moz-box-shadow: 0 0 2px rgba(170,170,170,.4) inset !important;
+  -ms-box-shadow: 0 0 2px rgba(170,170,170,.4) inset !important;
+  -o-box-shadow: 0 0 2px rgba(170,170,170,.4) inset !important;
+  box-shadow: 0 0 2px rgba(170,170,170,.4) inset !important;
+}
 .dx-theme-ios7 .dx-switch .dx-switch-wrapper
 {
+  -webkit-border-radius: inherit;
+  -moz-border-radius: inherit;
+  -ms-border-radius: inherit;
+  -o-border-radius: inherit;
   border-radius: inherit;
   overflow: hidden;
-  margin-right: 20px;
+  margin: 0 -3px 0 0;
 }
 .dx-theme-ios7 .dx-switch .dx-switch-inner
 {
-  width: 71px;
+  width: 200%;
   height: 100%;
 }
 .dx-theme-ios7 .dx-switch .dx-switch-on, .dx-theme-ios7 .dx-switch .dx-switch-off
 {
+  margin-left: -16px;
   float: left;
   height: 23px;
   text-align: center;
@@ -2822,21 +2852,21 @@
 }
 .dx-theme-ios7 .dx-switch .dx-switch-on
 {
-  padding: 4px 10px 4px 0;
-  width: 25px;
+  padding: 4px 0 4px 0;
+  width: 50%;
   background: #4ad660;
 }
 .dx-theme-ios7 .dx-switch .dx-switch-off
 {
   padding: 4px 0 4px 10px;
-  width: 26px;
+  width: 50%;
   background: #fefefe;
 }
 .dx-theme-ios7 .dx-switch .dx-switch-handle
 {
+  margin-left: -16px;
   position: relative;
   float: left;
-  margin: 0 -15.5px;
   width: 29px;
   height: 29px;
   border: 1px solid rgba(180,180,180,.7);
@@ -3671,11 +3701,10 @@
   -o-box-shadow: 0 1px 1px rgba(255,255,255,.5),inset 0 1px 1px rgba(255,255,255,.5);
   box-shadow: 0 1px 1px rgba(255,255,255,.5),inset 0 1px 1px rgba(255,255,255,.5);
   background-repeat: no-repeat;
-  background-image: -webkit-linear-gradient(180deg,rgba(137,145,168,.6) 0%,rgba(61,74,110,.6) 50%,rgba(41,56,95,.6) 50%,rgba(62,75,111,.6) 100%);
-  background-image: -moz-linear-gradient(180deg,rgba(137,145,168,.6) 0%,rgba(61,74,110,.6) 50%,rgba(41,56,95,.6) 50%,rgba(62,75,111,.6) 100%);
-  background-image: -ms-linear-gradient(180deg,rgba(137,145,168,.6) 0%,rgba(61,74,110,.6) 50%,rgba(41,56,95,.6) 50%,rgba(62,75,111,.6) 100%);
-  background-image: -o-linear-gradient(180deg,rgba(137,145,168,.6) 0%,rgba(61,74,110,.6) 50%,rgba(41,56,95,.6) 50%,rgba(62,75,111,.6) 100%);
-  background-image: linear-gradient(180deg,rgba(137,145,168,.6) 0%,rgba(61,74,110,.6) 50%,rgba(41,56,95,.6) 50%,rgba(62,75,111,.6) 100%);
+  background-image: -webkit-linear-gradient(270deg,rgba(137,145,168,.6) 0%,rgba(61,74,110,.6) 50%,rgba(41,56,95,.6) 50%,rgba(62,75,111,.6) 100%);
+  background-image: -moz-linear-gradient(270deg,rgba(137,145,168,.6) 0%,rgba(61,74,110,.6) 50%,rgba(41,56,95,.6) 50%,rgba(62,75,111,.6) 100%);
+  background-image: -ms-linear-gradient(270deg,rgba(137,145,168,.6) 0%,rgba(61,74,110,.6) 50%,rgba(41,56,95,.6) 50%,rgba(62,75,111,.6) 100%);
+  background-image: -o-linear-gradient(270deg,rgba(137,145,168,.6) 0%,rgba(61,74,110,.6) 50%,rgba(41,56,95,.6) 50%,rgba(62,75,111,.6) 100%);
 }
 .dx-theme-ios .dx-dialog-root .dx-overlay-content .dx-dialog-buttons .dx-button .dx-button-content .dx-button-text
 {
@@ -3684,20 +3713,18 @@
 .dx-theme-ios .dx-dialog-root .dx-overlay-content .dx-dialog-buttons .dx-button:last-child .dx-button-content
 {
   background-repeat: no-repeat;
-  background-image: -webkit-linear-gradient(180deg,rgba(182,187,201,.6) 0%,rgba(112,122,150,.6) 50%,rgba(93,104,136,.6) 50%,rgba(111,122,149,.6) 100%);
-  background-image: -moz-linear-gradient(180deg,rgba(182,187,201,.6) 0%,rgba(112,122,150,.6) 50%,rgba(93,104,136,.6) 50%,rgba(111,122,149,.6) 100%);
-  background-image: -ms-linear-gradient(180deg,rgba(182,187,201,.6) 0%,rgba(112,122,150,.6) 50%,rgba(93,104,136,.6) 50%,rgba(111,122,149,.6) 100%);
-  background-image: -o-linear-gradient(180deg,rgba(182,187,201,.6) 0%,rgba(112,122,150,.6) 50%,rgba(93,104,136,.6) 50%,rgba(111,122,149,.6) 100%);
-  background-image: linear-gradient(180deg,rgba(182,187,201,.6) 0%,rgba(112,122,150,.6) 50%,rgba(93,104,136,.6) 50%,rgba(111,122,149,.6) 100%);
+  background-image: -webkit-linear-gradient(270deg,rgba(182,187,201,.6) 0%,rgba(112,122,150,.6) 50%,rgba(93,104,136,.6) 50%,rgba(111,122,149,.6) 100%);
+  background-image: -moz-linear-gradient(270deg,rgba(182,187,201,.6) 0%,rgba(112,122,150,.6) 50%,rgba(93,104,136,.6) 50%,rgba(111,122,149,.6) 100%);
+  background-image: -ms-linear-gradient(270deg,rgba(182,187,201,.6) 0%,rgba(112,122,150,.6) 50%,rgba(93,104,136,.6) 50%,rgba(111,122,149,.6) 100%);
+  background-image: -o-linear-gradient(270deg,rgba(182,187,201,.6) 0%,rgba(112,122,150,.6) 50%,rgba(93,104,136,.6) 50%,rgba(111,122,149,.6) 100%);
 }
 .dx-theme-ios .dx-dialog-root .dx-overlay-content .dx-dialog-buttons .dx-button.dx-state-active .dx-button-content
 {
   background-repeat: no-repeat;
-  background-image: -webkit-linear-gradient(180deg,rgba(119,123,133,.6) 0%,rgba(51,57,73,.6) 50%,rgba(26,32,48,.6) 50%,rgba(35,41,58,.6) 100%);
-  background-image: -moz-linear-gradient(180deg,rgba(119,123,133,.6) 0%,rgba(51,57,73,.6) 50%,rgba(26,32,48,.6) 50%,rgba(35,41,58,.6) 100%);
-  background-image: -ms-linear-gradient(180deg,rgba(119,123,133,.6) 0%,rgba(51,57,73,.6) 50%,rgba(26,32,48,.6) 50%,rgba(35,41,58,.6) 100%);
-  background-image: -o-linear-gradient(180deg,rgba(119,123,133,.6) 0%,rgba(51,57,73,.6) 50%,rgba(26,32,48,.6) 50%,rgba(35,41,58,.6) 100%);
-  background-image: linear-gradient(180deg,rgba(119,123,133,.6) 0%,rgba(51,57,73,.6) 50%,rgba(26,32,48,.6) 50%,rgba(35,41,58,.6) 100%);
+  background-image: -webkit-linear-gradient(270deg,rgba(119,123,133,.6) 0%,rgba(51,57,73,.6) 50%,rgba(26,32,48,.6) 50%,rgba(35,41,58,.6) 100%);
+  background-image: -moz-linear-gradient(270deg,rgba(119,123,133,.6) 0%,rgba(51,57,73,.6) 50%,rgba(26,32,48,.6) 50%,rgba(35,41,58,.6) 100%);
+  background-image: -ms-linear-gradient(270deg,rgba(119,123,133,.6) 0%,rgba(51,57,73,.6) 50%,rgba(26,32,48,.6) 50%,rgba(35,41,58,.6) 100%);
+  background-image: -o-linear-gradient(270deg,rgba(119,123,133,.6) 0%,rgba(51,57,73,.6) 50%,rgba(26,32,48,.6) 50%,rgba(35,41,58,.6) 100%);
 }
 .dx-theme-ios .dx-dialog-root .dx-overlay-content::after
 {

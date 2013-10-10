@@ -1,7 +1,7 @@
 /*! 
 * DevExpress PhoneJS
-* Version: 13.1.6
-* Build date: Aug 13, 2013
+* Version: 13.1.7
+* Build date: Sep 17, 2013
 *
 * Copyright (c) 2012 - 2013 Developer Express Inc. ALL RIGHTS RESERVED
 * EULA: http://phonejs.devexpress.com/EULA
@@ -58,10 +58,30 @@
 {
   display: none;
 }
+.dx-theme-win8 .dx-toast-info .dx-toast-icon
+{
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAnCAQAAAAmqpm+AAACMUlEQVRIx7XWsWtTURTH8atWMUU79i9ooP4JnQqCoUOhoB0iWAOCewj0zwidHZTQJUOWQAYJLhmk/gEOkWRRsEOmkiFBUPJxSNPkvby8pBjv3d6955uTc8/5nROEhXtXwZmmjr6Rvo6mMwW7i22SP2fknetJXj3n8jKr4o7Vrw3bKopysrZk5RRVtK/P6o6X43aUDTBUdWI74ce2nagaYqBsJw23rwFqjlJiGgRHaqBhfxHuwAW6SjaXwIJgU0kXFw6ScPsu0HK4AmqyD7VwMfVwGrMGWvZuAQuCPS00JjGcfC6jeyvPph52UZ7FHRuglGKU8XDhWQmDcdqMr9ZRS3iAB15476shGGj74Ln7c49SQ11mjMtjOJcad71xmVgVl966E0ubIfJj3DmqMdhjH6WthkeR+1WcC8GuHk4ih/d8ilqPjOLAesTDE/TsBgW0Y+X0Om6bgONVpPTaKARnqMT+6peVcJ8jNhWcBU0UY7irlXBXEZsimkEHuRju+0q4nxGbHDpBH9kYrrIS7l3EJot+MMLWnKz/WoobxLRuC6Nk74KXfqfi/sxp8bV3SbELgqd+LEziS8/m7l/HLullJ2V/etMZpuub01hFRF42Ke9m95MIrDYnALG8S6qK6F4FdlMVSTWbjFsMm6nZZEWZx6XBZhRlkd5FcTUbqW1yRu8Wq/EElw6LqfGyXpEOm+sVyzrZxm072dr77JqngLXPKGufoNY+3619+vwPs/E/TO5/AXqu0asR6jqsAAAAAElFTkSuQmCC);
+}
+.dx-theme-win8 .dx-toast-warning .dx-toast-icon
+{
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAnCAQAAAAmqpm+AAABv0lEQVRIx7XWoY4acRDH8b/lBEkND3A5EnzVKcyFnLjkDE0wBFdNMH2FGsIrEAxJMSQoUoNC1ZNA+gBIBEg+FewebQL/Xe62O2539ruzM7+Z/wThqtV0DMyt7RztrM0NdNSuv3P5dknLyNbla2ukpZQX1zRNXlwZ6mqoKqtq6BpaJc+mmtm4B317HIy1VS58rKJt7IC9vocYrm4GJl4jOQ2CVxMwU7+Ge7bERs9dBiwI7vRssPR8CVe3xMJLDlRqLxZYniM852yGhccbYEHwaIFZmsP0dh+bmyI7R7hB/29c0x69d8CCoIf9STYn0U4xyVWAy0WZYKp0wrVwiEjjWyLcLxHZHNA64UYYR76e4p4iPmOMhKBmi/YHcW1s1YIOVhfbKbWvCe5zxKdihU4wwDCa6hR3H/UaYhDM0S0A18U8WKMRdXxKcJ+iXg2sgx2quXBx9VWxC44oF4Ar45gnuvtbosvO3Qn3OwOX5C67svksqWy27vJZorvsrrj3Cz+jQnnriuye/ZGU4nuens2eKHlwbxMle95l/+w/867gaVzwWVH4SVb4OVvwFlD4jlL4BlX4flf49vkfduMPbO5/AOMDGhYyPLsKAAAAAElFTkSuQmCC);
+}
+.dx-theme-win8 .dx-toast-error .dx-toast-icon
+{
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAnCAQAAAAmqpm+AAACKUlEQVRIx7WWsUtbURSHfy6FpFTaDjoLCkEIOBTELtmsg5AlQ4YGKRS6SvbOyRL8BzpIKGRIoZZMgQ6ZAg6Ck4oZXPtcqpSkdMnXwTyTvJx7X2yf72z3nftxOOd3zj0LyPlltKkNrWtFy3qmXwp0pTOd6lgXzjtYlqJInQD7C6hTJGXdXDCiK+it8pKkCx3rVGe6UqBlrWhdG9pURpL0TZ/1JS66VWr0gQENSiwZESxRosEA6FNjdfrvtGuOFgBN8shreZoAtMi5cDt0gR5l0jEwIdKU6QFddixcji7QYXcOVGi7dIDuOMJxzlpAh60HwITYogO0whyGxzWg96DIxhH2gNokrkAfKP8DTIgy0KcQ4lIcAc25CmAXpQkckbrDFYGBKQ1T+Tw1ZDMAine4OtAwrr3hB69mTiuc8GLmtAHUkcgQACUD9hu4iQArAJzwPOJdAgIyYg84N9opyzVEgJXREPjKk5nWOwf2xAFwaOYoCnTDhDgEDkQb2HfUbBLoh4l9oC0ugW2nCELgnxiY2AYuxS2w5lFVCPTDxBpwK4bAolemn0awIa89XovAMD66ysRYvzF0GInOn7vqCNQ2ZGPmzlfZ6kTOsjHAUWXduqtGCuAHjnTn6or3RjVD4E9eurrC1bNpvhvSyHLNkA8z3vc9654oaT4aOsvyzvC9nyi+eTevTc27hKdxwm9F4i9Z4u9swltA4jtK4htUAvvdI2+fj7Ab/8fm/hfqXqifJPWdaQAAAABJRU5ErkJggg==);
+}
+.dx-theme-win8 .dx-toast-success .dx-toast-icon
+{
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAnCAQAAAAmqpm+AAACHElEQVRIx7XWvWtTYRTA4bcIajsUF+vi4NBAELrbQeogoUOhIB2ylODkGrI4Wf0DDBldQ0EyxCHQQeJiQMji5hJMwL1O7ZBAQfI45DZJk5uP1us9030P7++ee76DMFPSckrq2s71nWurK8lJz74Tf7wq69ip+OfUsazVZXEHatHFlrK8jJR1KRl5Za1IV3OwGLepqIueikMbMR/bcKiih66izXm4HSegan+OT4NgXxWc2JmF29VER8HaAlgQrCnooGk3DrejiYa9JVCXsqeB5sjCkc9O0LB9DVgQbGvg5NKHl8dFdK5l2cjCDorjuANdFG4AC4ICuoO0GSRtDdWlAhAflCpqVge4LHoLU2NcHrgzkTY9ZAe4Y1SuZc133yZSvIJjIUg7xeHSsBUfwU+3x04PcSod5NCKLad4eR3V7KuJ0mshF5RQvkZa/AEfpjRllII68jEXt9ydOnvsDHy98qMDyaMetJGZUj5x5vME8J4O+OV+zOczaAfnSE2oHkZWjANv+QK6tmLdkMJ50Mf6lPJN5PARsAT6Xszw6jr68dYFwdEV4Mvo7e3MIEXWxfvuKvCZC/DJykxc5LtZkR0H9sGPuVUdRXZ+3h0N59dvj+ZmZJR3i6riPbjwfC5sWBWLa/bdVElNy7Bml+koTxcW37Cj3KTfTY/JsX6XcDdOeFYkPskSn7MJbwGJ7yiJb1CJ73eJb5//YTf+h839L2HPMAMNj6W4AAAAAElFTkSuQmCC);
+}
 @media screen and (orientation: portrait)
 {
   @-ms-viewport{width:320px;user-zoom:fixed;max-zoom:1;min-zoom:1;}
+  .dx-overlay-modal.dx-overlay
+  {
+    position: absolute;
   }
+}
 .dx-theme-win8 .dx-black-background
 {
   background: #000;
@@ -546,7 +566,9 @@
 .dx-theme-win8 .dx-button.dx-button-back .dx-button-back-arrow
 {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAQAAAACj/OVAAAA0ElEQVRYR+3UQQ6AMAhE0fbiGr24umwRWogzLEz/ks1LmkK9Sm51gegWKNvKIUflLLsc2cXAz1wMBHAREML5QRDnBWGcDwRyHhDKzUEwNwPh3BgkcCOQwtkgibNAGqeDRE4DqdwbJHMSpHM9qHHYagvyuQ7M4Bowh2vA4yEzap40h+w+TQbZgRmkAHVyf1YfmDxtdFKCdPINkkkNpJI6SCQtkEbaIIkcgRRyDBLIGQgn5yCY9IBQ0gcCSS8II/0giIyAEDIGAsgo+LkFwvs/eAMCjYgBMFVdMQAAAABJRU5ErkJggg==) 0 0 no-repeat;
-  background-size: 70%;
+  -webkit-background-size: 70% 100%;
+  -moz-background-size: 70% 100%;
+  background-size: 70% 100%;
   background-position: 50% 50%;
   width: 20px;
   height: 20px;
@@ -665,23 +687,26 @@
 .dx-theme-win8 .dx-switch .dx-switch-wrapper
 {
   border: 2px solid #585858;
-  padding: 1px;
-  width: 56px;
+  width: 100%;
   height: 13px;
+  padding: 1px 0 1px 0;
+  margin: 0 -3px 0 -1px;
 }
 .dx-theme-win8 .dx-switch .dx-switch-inner
 {
-  width: 106px;
+  width: 200%;
   height: 13px;
   position: relative;
 }
 .dx-theme-win8 .dx-switch .dx-switch-on, .dx-theme-win8 .dx-switch .dx-switch-off
 {
-  width: 50px;
+  margin-left: -6px;
+  width: 50%;
   height: 13px;
   font-size: 9pt;
   line-height: 1;
   text-align: center;
+  float: left;
 }
 .dx-theme-win8 .dx-switch .dx-switch-on
 {
@@ -690,12 +715,13 @@
 }
 .dx-theme-win8 .dx-switch .dx-switch-handle
 {
-  position: absolute;
+  float: left;
+  margin-left: -6px;
+  position: relative;
   width: 12px;
   height: 19px;
   background: #000;
   top: -3px;
-  left: 47px;
 }
 .dx-theme-win8 .dx-switch .dx-switch-off
 {
@@ -951,17 +977,21 @@
 {
   background: rgba(255,255,255,.4);
 }
-.dx-theme-win8 .dx-scrollview-pull-down-image
+.dx-theme-win8 .dx-scrollview-pull-down .dx-scrollview-pull-down-container
+{
+  width: 49%;
+}
+.dx-theme-win8 .dx-scrollview-pull-down .dx-scrollview-pull-down-image
 {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAyCAQAAAD2dTOtAAAAnUlEQVRIx2P4zwCHvlggXJZhcCjEC8lS2IAFDlmF1A+eM1jgkFVI/eDBBoasQuoHD9EK6/5fwoBYFc4k1jOjCumiUOv/gf+HwfA5FoWHobAUpDrq/5//+MGW/2wQg2PxKt3+nw3hxgScyvb+50T1TBo+Zai+zsTiFU7sKTwHTRkP7qxQCld2DFkZtjxTDVZ28j8/4cxVDSzu+MnOhQAuYS22p7h2vAAAAABJRU5ErkJggg==) 0 -5px no-repeat;
 }
-.dx-theme-win8 .dx-scrollview-pull-down-text
+.dx-theme-win8 .dx-scrollview-pull-down .dx-scrollview-pull-down-text
 {
   font-size: 16px;
   line-height: 16px;
   color: #fff;
 }
-.dx-theme-win8 .dx-scrollview-pull-down-loading .dx-scrollview-pull-down-image
+.dx-theme-win8 .dx-scrollview-pull-down .dx-scrollview-pull-down-loading .dx-scrollview-pull-down-image
 {
   width: 24px;
   height: 24px;
@@ -989,10 +1019,6 @@
   -ms-transition: transform,100ms;
   -ms-backface-visibility: hidden;
 }
-.dx-theme-win8 .dx-list .dx-list-item:hover
-{
-  background: #434343;
-}
 .dx-theme-win8 .dx-list .dx-list-item.dx-state-active
 {
   -webkit-transform: scale3d(.99,.95,1);
@@ -1004,6 +1030,10 @@
 .dx-theme-win8 .dx-list .dx-list-item.dx-state-disabled
 {
   color: #b2b2b2;
+}
+.dx-theme-win8 .dx-list:not(.dx-state-disabled) .dx-list-item:hover
+{
+  background: #434343;
 }
 .dx-theme-win8 .dx-list .dx-empty-message
 {
@@ -1131,9 +1161,7 @@
 {
   height: 34px;
   min-width: 64px;
-  border-width: 3px;
-  border-style: solid;
-  border-color: #d7d7d7;
+  border: 3px solid #d7d7d7;
   font-size: 11pt;
   font-weight: 400;
   line-height: 1.3636;
