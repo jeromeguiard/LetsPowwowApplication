@@ -1,17 +1,31 @@
 <div data-options="dxView : { name: 'venueDetails', title: 'Venue' } " >
     <div data-options="dxContent : { targetPlaceholder: 'content' } " >
+
         <div class="dx-fieldset">
-            <div class="dx-field">
-                <div class="dx-field-label">Id: </div>
-                <div class="dx-field-value" data-bind="text: id"></div>
-            </div>
+
+            <!-- First display the venue name-->
             <div class="dx-field">
                 <div class="dx-field-label">Name: </div>
                 <div class="dx-field-value" data-bind="text: title"  ></div>
             </div>
-            <div data-bind="dxButton: { text: 'Checkin', clickAction: checkin }"></div>
-            <div data-bind="dxButton: { text: likeText(), clickAction: like }"></div>
+            <!--Display the venue descritpion -->
+            <div class="dx-field">
+                <div class="dx-field-label">Description: </div>
+                <div class="dx-field-value" data-bind="text: description"  ></div>
+            </div>
+            <!-- Number of Like -->
+            <div class="iconSet-imageBox">
+                <span data-bind="attr: { 'class':  'dx-icon-like' }"></span>
+                <span data-bind="text: like_count"></span>
+            </div>
+            <!--Button control-->
+            <div class="dx-field">
+                <div data-bind="dxButton: { text: 'Checkin', clickAction: checkin }"></div>
+                <div data-bind="dxButton: { text: likeText(), clickAction: like }"></div>
+            </div>
         </div>
-        <div data-bind="dxGallery: { dataSource: galleryData }"></div>
+
+        <div class="gallery" data-bind="dxGallery: { dataSource: galleryData }"></div>
+
     </div>
 </div>

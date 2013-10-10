@@ -1,3 +1,7 @@
+/**
+ *
+ * @constructor
+ */
 function Point(){
 
     this.uri ="point/";

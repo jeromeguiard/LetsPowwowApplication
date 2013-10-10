@@ -1,3 +1,7 @@
+/**
+ *
+ * @returns {{}}
+ */
 Powwow.map = function() {
 
     var viewModel={
