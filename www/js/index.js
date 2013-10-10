@@ -61,20 +61,14 @@ var app = {
                         icon: "home"
 
                     },
-                    {
-                        title: "About",
-                        action: "#about",
-                        icon: "info"
-
-                    },
-                    {
+                                        {
                         "title": "Maps",
                         "action": "#map",
                         "icon": "map"
 
                     },
                       {
-                          "title": "User",
+                          "title": "Profile",
                           "action": "#user",
                           "icon": "user"
 

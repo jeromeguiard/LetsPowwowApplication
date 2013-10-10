@@ -1,5 +1,7 @@
 /** Represent all informations
  *
+ * @constructor
+ *
  * */
 function applicationInfos(){
     new Rest("/api/v1/content_type/", "GET" ,{"limit" : "100"},{},null, storeContentType );

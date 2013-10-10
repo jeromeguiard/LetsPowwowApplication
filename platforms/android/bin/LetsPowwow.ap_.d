@@ -37,8 +37,10 @@
 /home/jerome/projects/LetsPowwowApplication/platforms/android/assets/www/spec.html \
 /home/jerome/projects/LetsPowwowApplication/platforms/android/assets/www/index.html \
 /home/jerome/projects/LetsPowwowApplication/platforms/android/assets/www/views/login.html \
+/home/jerome/projects/LetsPowwowApplication/platforms/android/assets/www/views/venues.css \
 /home/jerome/projects/LetsPowwowApplication/platforms/android/assets/www/views/user.html \
 /home/jerome/projects/LetsPowwowApplication/platforms/android/assets/www/views/checkin.html \
+/home/jerome/projects/LetsPowwowApplication/platforms/android/assets/www/views/venue-details.css \
 /home/jerome/projects/LetsPowwowApplication/platforms/android/assets/www/views/venues.js \
 /home/jerome/projects/LetsPowwowApplication/platforms/android/assets/www/views/login.js \
 /home/jerome/projects/LetsPowwowApplication/platforms/android/assets/www/views/registration.js \

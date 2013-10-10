@@ -1,0 +1,11 @@
+.gallery{
+    height: 370px;
+}
+
+.iconSet-imageBox span
+{
+    width: 28px;
+    height: 28px;
+    background-size: 28px 28px;
+    display: inline-block;
+}

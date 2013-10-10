@@ -1,3 +1,7 @@
+/**
+ *
+ * @constructor
+ */
 function Profile(){
 
     this.uri ="profile/";

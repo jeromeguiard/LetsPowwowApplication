@@ -43,9 +43,6 @@ function Venue(){
         return mainDiv;
     };
 
-
-
-
     this.displayOneSingleVenue=function(){
         var pageTitle = document.getElementById("title");
         pageTitle.innerHTML = this.title;
@@ -71,8 +68,8 @@ function Venue(){
         }
 
         var coordinateAsString = this.position.replace("POINT (","").replace(")","");
-        var coordinates = new google.maps.LatLng(parseFloat(coordinateAsString.split(" ")[1]),
-            parseFloat(coordinateAsString.split(" ")[0]));
+        var coordinates = new google.maps.LatLng(parseFloat(coordinateAsString.split(" ")[0]),
+            parseFloat(coordinateAsString.split(" ")[1]));
 
         var marker = new google.maps.Marker({
             position: coordinates,

@@ -1,3 +1,7 @@
+/**
+ *
+ * @constructor
+ */
 function Position(){
 
     this.location = window.localStorage.getItem("position");

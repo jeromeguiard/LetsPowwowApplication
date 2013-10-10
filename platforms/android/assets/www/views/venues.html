@@ -1,7 +1,18 @@
 <div data-options="dxView : { name: 'venues', title:'Venues'   } " >
     <div data-options="dxContent : { targetPlaceholder: 'content' } " >
         <div data-bind="dxList: { dataSource: dataSource }">
-            <div data-options="dxTemplate : { name: 'item' }" data-bind="text: title_en_us, dxAction:'#venueDetails/{id}'" ></div>
+            <div data-options="dxTemplate : { name: 'item' }" data-bind="dxAction:'#venueDetails/{id}'" >
+                <div>
+                    <img data-bind="attr :{src : image}">
+                    <span data-bind="text: title"/>
+                    <div class="iconSet-imageBox">
+                        <span data-bind="attr: { 'class': likeIcon }"></span> :
+                        <span data-bind="text: likeCount"/>
+                        <span data-bind="attr: { 'class': checkinIcon }"></span> :
+                        <span data-bind="text: checkinCount"/>
+                    <div>
+                 </div>
+            </div>
         </div>
     </div>
 </div>

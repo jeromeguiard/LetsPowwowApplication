@@ -1,6 +1,6 @@
 /**
  * Request position to the device
- *
+ * @function
  * */
 function getPosition(){
     var positionsOptions = { maximumAge: 1200000, timeout: 10000, enableHighAccuracy: false };

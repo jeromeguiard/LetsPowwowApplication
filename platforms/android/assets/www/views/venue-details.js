@@ -33,6 +33,9 @@ Powwow.venueDetails= function(params){
     var viewModel = {
         id : venue.id,
         title : venue.title_en_us,
+        description :venue.description_en_us,
+        like_count : venue.like_count,
+        checkin_count : venue.checkin_count,
         checkin : function(){
            Powwow.app.navigate("checkin/"+params.id)  ;
         },
@@ -52,6 +55,7 @@ Powwow.venueDetails= function(params){
         ]
     };
 
-
+    console.log(window.localStorage.getItem("venue_"+params.id));
+    console.log(viewModel.title);
     return viewModel;
 }

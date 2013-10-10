@@ -1,6 +1,6 @@
 /** Represent an Api-Key object
  * @class
- *
+ * @constructor
  * */
 function ApiKey(){
 

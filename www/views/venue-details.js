@@ -1,8 +1,18 @@
+/**
+ *
+ * @param params
+ * @returns {{id: *, title: *, description: *, like_count: *, checkin_count: *, checkin: Function, liked: boolean,
+ * likeID: number, likeText: *, like: Function, galleryData: Array}}
+ */
 Powwow.venueDetails= function(params){
 
     var venue = JSON.parse(window.localStorage.getItem("venue_"+params.id));
 
-    new Rest("/api/v1/like/", "get", {sender:window.localStorage.getItem("userId"),receiver_object_id:params.id}, {},null, changeLikedValue );
+    new Rest("/api/v1/like/", "get", {sender:window.localStorage.getItem("userId"),
+                                      receiver_object_id:params.id},
+                                      {},
+                                      null,
+                                      changeLikedValue );
 
 
     var likeArray = {"content_type" : "/api/v1/content_type/36/",
@@ -33,6 +43,9 @@ Powwow.venueDetails= function(params){
     var viewModel = {
         id : venue.id,
         title : venue.title_en_us,
+        description :venue.description_en_us,
+        like_count : venue.like_count,
+        checkin_count : venue.checkin_count,
         checkin : function(){
            Powwow.app.navigate("checkin/"+params.id)  ;
         },
@@ -52,6 +65,7 @@ Powwow.venueDetails= function(params){
         ]
     };
 
-
+    console.log(window.localStorage.getItem("venue_"+params.id));
+    console.log(viewModel.title);
     return viewModel;
 }
